@@ -1,5 +1,7 @@
 package daos
 
+import java.util.concurrent.Future
+
 import com.google.inject.Inject
 import models.AccountAd
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfig, HasDatabaseConfigProvider}
@@ -28,5 +30,8 @@ class AccountAdDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
   import driver.api._
 
   private val accountAds = TableQuery[AccountAds]
+
+  def insert(accountId: Long, adId: Long): Future[AccountAd] =
+    db.run(accountAds returnin accountAds += AccountAd(accountId, adId))
 
 }
