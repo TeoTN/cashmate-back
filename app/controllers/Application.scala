@@ -1,13 +1,17 @@
 package controllers
 
 import javax.inject._
+
+import daos.AccountDAO
 import play.api.mvc._
 
-@Singleton
-class Application @Inject() extends Controller {
+import scala.concurrent.ExecutionContext.Implicits.global
 
-  def index = Action {
-    Ok("APP")
+@Singleton
+class Application @Inject()(accountDAO: AccountDAO) extends Controller {
+
+  def index = Action.async {
+    accountDAO.findAll() map (out => Ok(out.head.login))
   }
 
 }
