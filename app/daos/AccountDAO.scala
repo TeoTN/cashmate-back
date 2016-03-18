@@ -1,7 +1,3 @@
-/**
-  * Copyright (C) Bright IT 2016. All rights reserved.
-  * Author: Michal Kielbowicz
-  */
 package daos
 
 import com.google.inject.Inject

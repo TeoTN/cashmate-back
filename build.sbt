@@ -8,6 +8,7 @@ scalaVersion := "2.11.8"
 
 libraryDependencies ++= Seq(
   evolutions,
+  filters,
   cache,
 
   "org.postgresql" % "postgresql" % "9.4-1206-jdbc42",
