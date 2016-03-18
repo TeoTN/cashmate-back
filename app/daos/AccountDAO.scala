@@ -40,6 +40,13 @@ class AccountDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvide
 
   private val accounts = TableQuery[Accounts]
 
-  def findAll(): Future[Seq[Account]] = db.run(accounts.result)
+  def findAll(): Future[Seq[Account]] =
+    db.run(accounts.result)
+
+  def findByLogin(login: String): Future[Option[Account]] =
+    db.run(accounts.filter(_.login === login).result.headOption)
+
+  def insert(account: Account): Future[Account] =
+    db.run(accounts returning accounts += account)
 
 }
