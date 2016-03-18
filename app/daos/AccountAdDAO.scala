@@ -29,4 +29,7 @@ class AccountAdDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
 
   private val accountAds = TableQuery[AccountAds]
 
+  def insert(accountAd: AccountAd): concurrent.Future[AccountAd] =
+    db.run(accountAds returning accountAds += accountAd)
+
 }

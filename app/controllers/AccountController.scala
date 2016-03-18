@@ -50,17 +50,17 @@ class AccountController @Inject()(accountDAO: AccountDAO) extends Controller {
 
   private val salt = BCrypt.gensalt()
 
-  private def errorJson = JsObject(Seq(
-    "answer" -> JsString("ERR")
-  ))
+  private def errorJson = Json.obj(
+    "answer" -> "ERR"
+  )
 
-  private def okJson(account: Account) = JsObject(Seq(
-    "answer" -> JsString("OK"),
-    "id" -> JsNumber(account.id.get),
-    "login" -> JsString(account.login),
-    "email" -> JsString(account.email),
-    "points" -> JsNumber(account.points)
-  ))
+  private def okJson(account: Account) = Json.obj(
+    "answer" -> "OK",
+    "id" -> account.id.get,
+    "login" -> account.login,
+    "email" -> account.email,
+    "points" -> account.points
+  )
 
   private case class AuthenticationRequest(login: String, password: String)
 

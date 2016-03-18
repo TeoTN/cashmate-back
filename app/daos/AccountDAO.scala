@@ -6,6 +6,7 @@ import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfig, HasDatabase
 import slick.driver.PostgresDriver
 
 import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
 
 trait AccountComponent {
 
@@ -39,10 +40,21 @@ class AccountDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvide
   def findAll(): Future[Seq[Account]] =
     db.run(accounts.result)
 
+  def findById(id: Long): Future[Option[Account]] =
+    db.run(accounts.filter(_.id === id).result.headOption)
+
   def findByLogin(login: String): Future[Option[Account]] =
     db.run(accounts.filter(_.login === login).result.headOption)
 
   def insert(account: Account): Future[Account] =
     db.run(accounts returning accounts += account)
+
+  def addPoints(accountId: Long, points: Int): Future[Unit] = {
+    val query = for {account <- accounts if account.id === accountId} yield account.points
+    findById(accountId) map {
+      case None => None
+      case Some(account) => db.run(query.update(account.points + points).map(_ => ()))
+    }
+  }
 
 }
