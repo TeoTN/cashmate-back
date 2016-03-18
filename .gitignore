@@ -1,0 +1,7 @@
+/project/target
+/target
+.idea
+*.iml
+/lib
+/logs
+server.pid
