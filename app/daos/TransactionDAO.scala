@@ -26,7 +26,7 @@ trait TransactionComponent {
 
     def accountId = column[Long]("account_id")
 
-    def acceptedByVendor = column[Boolean]("accepted")
+    def acceptedByVendor = column[Boolean]("accepted_vendor")
 
     def * = (id.?, code, timestamp, couponId, accountId, acceptedByVendor) <>((Transaction.apply _).tupled, Transaction.unapply)
 
