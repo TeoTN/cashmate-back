@@ -27,7 +27,7 @@ trait AdComponent {
 
     def vendor = column[String]("vendor")
 
-    def * = (id.?, title, videoLink, points) <>((Ad.apply _).tupled, Ad.unapply)
+    def * = (id.?, title, videoLink, points, vendor) <>((Ad.apply _).tupled, Ad.unapply)
 
   }
 
