@@ -22,14 +22,14 @@ class AccountController @Inject()(accountDAO: AccountDAO) extends Controller {
       error => Future.successful(BadRequest(Json.toJson(errorJson))),
       authenticationRequest =>
         accountDAO.findByLogin(authenticationRequest.login) map {
-          case None => BadRequest(Json.toJson(errorJson))
-          case Some(account) => {
+          case None =>
+            BadRequest(Json.toJson(errorJson))
+          case Some(account) =>
             if (BCrypt.checkpw(authenticationRequest.password, account.passwordHash)) {
-              Ok(Json.toJson(okJson(account))).withSession(request.session + ("id" -> account.id.get.toString))
+              Ok(Json.toJson(okJson(account)))
             } else {
               Unauthorized(Json.toJson(errorJson))
             }
-          }
         }
     )
   }
@@ -41,8 +41,8 @@ class AccountController @Inject()(accountDAO: AccountDAO) extends Controller {
       registrationRequest =>
         accountDAO.insert(new Account(
           registrationRequest.login, BCrypt.hashpw(registrationRequest.password, salt), registrationRequest.email
-        )) map { account => Ok(
-          Json.toJson(okJson(account))).withSession(request.session + ("id" -> account.id.get.toString))
+        )) map {
+          account => Ok(Json.toJson(okJson(account)))
         }
     )
   }
@@ -62,7 +62,8 @@ class AccountController @Inject()(accountDAO: AccountDAO) extends Controller {
     "id" -> account.id.get,
     "login" -> account.login,
     "email" -> account.email,
-    "points" -> account.points
+    "points" -> account.points,
+    "token" -> account.token
   )
 
   private case class AuthenticationRequest(login: String, password: String)

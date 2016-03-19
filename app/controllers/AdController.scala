@@ -15,10 +15,10 @@ class AdController @Inject()
 (answerDAO: AnswerDAO)
   extends Controller {
 
-  def obtain = Action.async { implicit request =>
-    forAuthorizedUser(request, (accountId) => {
+  def obtain(token: String) = Action.async { implicit request =>
+    forAuthorizedUser(token, request, (accountId) => {
       adDAO.findRandomForUser(accountId) flatMap {
-        case None => Future.successful(Ok("DUPA"))
+        case None => Future.successful(BadRequest(Json.toJson(errorJson)))
         case Some(ad) => questionDAO.findRandomQuestionForAd(ad.id.get) flatMap {
           question => answerDAO.findAnswersForQuestion(question.id.get) map {
             answer => Ok(Json.toJson(okJsonObtain(ad, question, answer)))
@@ -28,11 +28,11 @@ class AdController @Inject()
     })
   }
 
-  def answer(adId: Long) = Action.async(BodyParsers.parse.json) { implicit request =>
+  def answer(adId: Long, token: String) = Action.async(BodyParsers.parse.json) { implicit request =>
     implicit val answerRequestFormat = Json.format[AnswerRequest]
     request.body.validate[AnswerRequest].fold(
       error => Future.successful(BadRequest(Json.toJson(errorJson))),
-      answerRequest => forAuthorizedUser(request, (accountId) => {
+      answerRequest => forAuthorizedUser(token, request, (accountId) => {
         questionDAO.findById(answerRequest.questionId) flatMap {
           case None => Future.successful(BadRequest(Json.toJson(errorJson)))
           case Some(question) => answerDAO.findAnswersForQuestion(question.id.get) flatMap {
@@ -54,11 +54,10 @@ class AdController @Inject()
     )
   }
 
-  private def forAuthorizedUser(request: Request[AnyRef], func: Long => Future[Result]) =
-    request.session.get("id") map {
-      accountId => func(accountId.toLong)
-    } getOrElse {
-      Future.successful(Unauthorized(Json.toJson(errorJson)))
+  private def forAuthorizedUser(token: String, request: Request[AnyRef], func: Long => Future[Result]) =
+    accountDAO.findByToken(token) flatMap {
+      case None => Future.successful(Unauthorized(Json.toJson(errorJson)))
+      case Some(account) => func(account.id.get)
     }
 
   private def checkAnswers(dbAnswerIds: Seq[Answer], answerIds: Seq[Long]): Boolean =

@@ -25,7 +25,9 @@ trait AccountComponent {
 
     def points = column[Int]("points")
 
-    def * = (id.?, login, passwordHash, email, points) <>((Account.apply _).tupled, Account.unapply)
+    def token = column[String]("token")
+
+    def * = (id.?, login, passwordHash, email, points, token) <>((Account.apply _).tupled, Account.unapply)
   }
 
 }
@@ -42,6 +44,9 @@ class AccountDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvide
 
   def findById(id: Long): Future[Option[Account]] =
     db.run(accounts.filter(_.id === id).result.headOption)
+
+  def findByToken(token: String): Future[Option[Account]] =
+    db.run(accounts.filter(_.token === token).result.headOption)
 
   def findByLogin(login: String): Future[Option[Account]] =
     db.run(accounts.filter(_.login === login).result.headOption)

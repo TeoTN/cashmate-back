@@ -3,6 +3,6 @@
 curl --include \
   --request POST \
   --header "Content-type: application/json" \
-  --data '{"questionId": 2, "answerIds": [6]}' \
+  --data '{"questionId": 3, "answerIds": [7]}' \
   -b cookies.txt -c cookies.txt \
-  http://localhost:9000/ad/1/answer
+  http://localhost:9000/ad/4/answer?token=123123124
