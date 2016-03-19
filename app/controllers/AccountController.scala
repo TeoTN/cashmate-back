@@ -48,7 +48,7 @@ class AccountController @Inject()(accountDAO: AccountDAO) extends Controller {
   }
 
   def logout = Action {
-    Ok("OK").withNewSession
+    Ok("OK")
   }
 
   private val salt = BCrypt.gensalt()

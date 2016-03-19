@@ -54,6 +54,11 @@ class AccountDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvide
   def insert(account: Account): Future[Account] =
     db.run(accounts returning accounts += account)
 
+  def updateToken(oldToken: String, newToken: String): Future[Unit] = {
+    val query = for {account <- accounts if account.token === oldToken} yield account.token
+    db.run(query.update(newToken).map(_ => ()))
+  }
+
   def addPoints(accountId: Long, points: Int): Future[Unit] = {
     val query = for {account <- accounts if account.id === accountId} yield account.points
     findById(accountId) map {

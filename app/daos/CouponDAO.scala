@@ -43,6 +43,7 @@ class CouponDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider
   def findAll(): Future[Seq[Coupon]] =
     db.run(coupons.result)
 
-
+  def findByPattern(pattern: String): Future[Seq[Coupon]] =
+    db.run(coupons.filter(coupon => (coupon.location like pattern) || (coupon.title like pattern)).result)
 
 }
