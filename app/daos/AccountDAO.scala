@@ -67,4 +67,12 @@ class AccountDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvide
     }
   }
 
+  def removePoints(accountId: Long, points: Int): Future[Unit] = {
+    val query = for {account <- accounts if account.id === accountId} yield account.points
+    findById(accountId) map {
+      case None => None
+      case Some(account) => db.run(query.update(account.points - points).map(_ => ()))
+    }
+  }
+
 }

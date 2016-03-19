@@ -1,7 +1,7 @@
 package daos
 
 import com.google.inject.Inject
-import models.{Coupon, Question}
+import models.Coupon
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfig, HasDatabaseConfigProvider}
 import slick.driver.PostgresDriver
 
@@ -42,6 +42,9 @@ class CouponDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider
 
   def findAll(): Future[Seq[Coupon]] =
     db.run(coupons.result)
+
+  def findById(id: Long): Future[Option[Coupon]] =
+    db.run(coupons.filter(_.id === id).result.headOption)
 
   def findByPattern(pattern: String): Future[Seq[Coupon]] =
     db.run(coupons.filter(coupon => (coupon.location like pattern) || (coupon.title like pattern)).result)
