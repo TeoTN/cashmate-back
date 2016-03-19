@@ -49,7 +49,7 @@ class AdController @Inject()
                   Ok(Json.toJson(okJsonAnswer(ad)))
               }
             } else {
-              Future.successful(Ok(Json.toJson(errorJson("Wrong answer"))))
+              Future.successful(BadRequest(Json.toJson(errorJson("Wrong answer"))))
             }
           }
         }
