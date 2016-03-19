@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
 curl --include \
-  --request GET \
+  --request POST \
+  --header "Content-type: application/json" \
+  --data '{"login": "a", "password": "a"}' \
   -b cookies.txt -c cookies.txt \
-  -H "Origin: -" \
-  http://localhost:9000
+  http://localhost:9000/user/login
