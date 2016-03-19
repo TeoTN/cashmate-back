@@ -3,6 +3,7 @@ package controllers
 import com.google.inject.Inject
 import daos._
 import models.{AccountAd, Ad, Answer, Question}
+import play.Logger
 import play.api.libs.json._
 import play.api.mvc._
 
@@ -16,6 +17,7 @@ class AdController @Inject()
   extends Controller {
 
   def obtain(token: String) = Action.async { implicit request =>
+    Logger.debug("AD")
     forAuthorizedUser(token, request, (accountId) => {
       adDAO.findRandomForUser(accountId) flatMap {
         case None => Future.successful(BadRequest(Json.toJson(errorJson("No ads available."))))
@@ -29,6 +31,7 @@ class AdController @Inject()
   }
 
   def answer(adId: Long, token: String) = Action.async(BodyParsers.parse.json) { implicit request =>
+    Logger.debug("ANSWER")
     implicit val answerRequestFormat = Json.format[AnswerRequest]
     request.body.validate[AnswerRequest].fold(
       error => Future.successful(BadRequest(Json.toJson(errorJson("Parsing error")))),

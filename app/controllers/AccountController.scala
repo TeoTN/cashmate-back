@@ -17,7 +17,7 @@ class AccountController @Inject()(accountDAO: AccountDAO) extends Controller {
 
   def login = Action.async(BodyParsers.parse.json) { implicit request =>
     implicit val authenticationRequestFormat = Json.format[AuthenticationRequest]
-    Logger.debug(request.body.toString())
+    Logger.debug("LOGIN")
     request.body.validate[AuthenticationRequest].fold(
       error => Future.successful(BadRequest(Json.toJson(errorJson("Parsing error")))),
       authenticationRequest =>
@@ -36,6 +36,7 @@ class AccountController @Inject()(accountDAO: AccountDAO) extends Controller {
 
   def register = Action.async(BodyParsers.parse.json) { implicit request =>
     implicit val registrationRequestFormat = Json.format[RegistrationRequest]
+    Logger.debug("REGISTER")
     request.body.validate[RegistrationRequest].fold(
       error => Future.successful(BadRequest(Json.toJson(errorJson("Parsing error")))),
       registrationRequest =>
@@ -48,6 +49,7 @@ class AccountController @Inject()(accountDAO: AccountDAO) extends Controller {
   }
 
   def logout = Action {
+    Logger.debug("LOGOUT")
     Ok("OK")
   }
 
