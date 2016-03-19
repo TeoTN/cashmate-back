@@ -7,7 +7,12 @@ class ApplicationController extends Controller {
 
   def index = Action {
     Logger.info("connected")
-    Ok("OK")
+    Ok("DUPA BEZ CYCOW")
+  }
+
+  def index2 = Action {
+    Logger.info("connected2")
+    Ok("DUPA I CYCE")
   }
 
 }

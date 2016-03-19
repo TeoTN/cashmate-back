@@ -3,6 +3,7 @@
 # ~~~~
 
 GET         /                       controllers.ApplicationController.index
+POST        /                       controllers.ApplicationController.index2
 
 # Account
 POST        /user/login             controllers.AccountController.login
