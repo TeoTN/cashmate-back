@@ -35,7 +35,7 @@ class TransactionController @Inject()(accountDAO: AccountDAO)(transactionDAO: Tr
   }
 
   def checkTransaction(transactionId: Long, token: String) = Action.async { implicit request =>
-    Logger.debug("CHECK " + request.body.toString)
+    Logger.debug("CHECK")
     forAuthorizedUser(token, (accountId) => {
       transactionDAO.findById(transactionId) map {
         case None =>
@@ -51,7 +51,7 @@ class TransactionController @Inject()(accountDAO: AccountDAO)(transactionDAO: Tr
   }
 
   def acceptTransactionByClient(transactionId: Long, token: String) = Action.async { implicit request =>
-    Logger.debug("CLIENT CONFIRM " + request.body.toString)
+    Logger.debug("CLIENT CONFIRM")
     forAuthorizedUser(token, (accountId) => {
       transactionDAO.findById(transactionId) flatMap {
         case None =>
@@ -74,7 +74,7 @@ class TransactionController @Inject()(accountDAO: AccountDAO)(transactionDAO: Tr
   }
 
   def acceptTransactionByVendor(code: Int) = Action.async { implicit request =>
-    Logger.debug("VENDOR CONFIRM " + request.body.toString)
+    Logger.debug("VENDOR CONFIRM")
     transactionDAO.findByCode(code) flatMap {
       case None => Future.successful(BadRequest(Json.toJson(errorJson("No such transaction"))))
       case Some(transaction) => transactionDAO.acceptTransaction(transaction.id.get) map {
