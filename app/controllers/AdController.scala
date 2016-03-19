@@ -38,8 +38,8 @@ class AdController @Inject()
       answerRequest => forAuthorizedUser(token, (accountId) => {
         questionDAO.findById(answerRequest.questionId) flatMap {
           case None => Future.successful(BadRequest(Json.toJson(errorJson("Invalid query"))))
-          case Some(question) => answerDAO.findAnswersForQuestion(question.id.get) flatMap {
-            answers => if (checkAnswers(answers, answerRequest.answerIds)) {
+          case Some(question) => answerDAO.findAnswersForQuestion(question.id.get) flatMap { answers =>
+            if (checkAnswers(answers, answerRequest.answerIds)) {
               adDAO.findById(adId) map {
                 case None =>
                   BadRequest(Json.toJson(errorJson("Invalid query")))

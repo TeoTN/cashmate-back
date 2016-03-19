@@ -2,4 +2,4 @@
 
 curl --include \
   --request GET \
-  -i http://localhost:9000/transaction/vendor/895463?token=123123124
+  -i http://localhost:9000/transaction/vendor/$1?token=123123124
