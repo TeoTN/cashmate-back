@@ -19,11 +19,12 @@ class AccountController @Inject()(accountDAO: AccountDAO) extends Controller {
     implicit val authenticationRequestFormat = Json.format[AuthenticationRequest]
     request.body.validate[AuthenticationRequest].fold(
       error => Future.successful(BadRequest(Json.toJson(errorJson))),
-      authenticationRequest =>
+      authenticationRequest => {
+        Logger.info("kupa")
         accountDAO.findByLogin(authenticationRequest.login) map {
           case None => BadRequest(Json.toJson(errorJson))
           case Some(account) => {
-            Logger.info(s"${account.login}")
+            Logger.info("kupa2")
             if (BCrypt.checkpw(authenticationRequest.password, account.passwordHash)) {
               Ok(Json.toJson(okJson(account))).withSession(request.session + ("id" -> account.id.get.toString))
             } else {
@@ -31,6 +32,7 @@ class AccountController @Inject()(accountDAO: AccountDAO) extends Controller {
             }
           }
         }
+      }
     )
   }
 
