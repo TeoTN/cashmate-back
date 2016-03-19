@@ -18,7 +18,7 @@ class AdController @Inject()
 
   def obtain(token: String) = Action.async { implicit request =>
     Logger.debug("AD")
-    forAuthorizedUser(token, request, (accountId) => {
+    forAuthorizedUser(token, (accountId) => {
       adDAO.findRandomForUser(accountId) flatMap {
         case None => Future.successful(BadRequest(Json.toJson(errorJson("No ads available."))))
         case Some(ad) => questionDAO.findRandomQuestionForAd(ad.id.get) flatMap {
@@ -35,7 +35,7 @@ class AdController @Inject()
     implicit val answerRequestFormat = Json.format[AnswerRequest]
     request.body.validate[AnswerRequest].fold(
       error => Future.successful(BadRequest(Json.toJson(errorJson("Parsing error")))),
-      answerRequest => forAuthorizedUser(token, request, (accountId) => {
+      answerRequest => forAuthorizedUser(token, (accountId) => {
         questionDAO.findById(answerRequest.questionId) flatMap {
           case None => Future.successful(BadRequest(Json.toJson(errorJson("Invalid query"))))
           case Some(question) => answerDAO.findAnswersForQuestion(question.id.get) flatMap {
@@ -57,7 +57,7 @@ class AdController @Inject()
     )
   }
 
-  private def forAuthorizedUser(token: String, request: Request[AnyRef], func: Long => Future[Result]) =
+  private def forAuthorizedUser(token: String, func: Long => Future[Result]) =
     accountDAO.findByToken(token) flatMap {
       case None => Future.successful(Unauthorized(Json.toJson(errorJson("Wrong token"))))
       case Some(account) => func(account.id.get)
