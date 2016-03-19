@@ -55,9 +55,7 @@ class TransactionDAO @Inject()(protected val dbConfigProvider: DatabaseConfigPro
     db.run(query.update(true).map(_ => ()))
   }
 
-  def deleteById(id: Long): Future[Unit] = {
+  def deleteById(id: Long): Future[Unit] =
     db.run(transactions.filter(_.id === id).delete.map(_ => ()))
-  }
-
 
 }
