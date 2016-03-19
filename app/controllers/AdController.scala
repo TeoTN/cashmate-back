@@ -18,7 +18,7 @@ class AdController @Inject()
   def obtain = Action.async { implicit request =>
     forAuthorizedUser(request, (accountId) => {
       adDAO.findRandomForUser(accountId) flatMap {
-        case None => Future.successful(BadRequest(Json.toJson(errorJson)))
+        case None => Future.successful(Ok("DUPA"))
         case Some(ad) => questionDAO.findRandomQuestionForAd(ad.id.get) flatMap {
           question => answerDAO.findAnswersForQuestion(question.id.get) map {
             answer => Ok(Json.toJson(okJsonObtain(ad, question, answer)))
