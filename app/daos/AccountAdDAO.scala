@@ -5,6 +5,8 @@ import models.AccountAd
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfig, HasDatabaseConfigProvider}
 import slick.driver.PostgresDriver
 
+import scala.concurrent.Future
+
 trait AccountAdComponent {
 
   self: HasDatabaseConfig[PostgresDriver] =>

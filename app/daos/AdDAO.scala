@@ -1,7 +1,7 @@
 package daos
 
 import com.google.inject.Inject
-import models.{AccountAd, Ad}
+import models.Ad
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfig, HasDatabaseConfigProvider}
 import slick.driver.PostgresDriver
 
@@ -21,7 +21,7 @@ trait AdComponent {
 
     def title = column[String]("title")
 
-    def videoLink = column[String]("video_link")
+    def videoLink = column[String]("video_url")
 
     def points = column[Int]("points")
 
@@ -41,16 +41,15 @@ class AdDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
 
   private val rand = SimpleFunction.nullary[Double]("random")
 
+  def findAll(): Future[Seq[Ad]] =
+    db.run(ads.result)
+
   def findById(id: Long): Future[Option[Ad]] =
     db.run(ads.filter(_.id === id).result.headOption)
 
-  def findRandomForUser(accountId: Long): Future[Option[Ad]] =
-    db.run(findUnseenQuery(accountId).sortBy(x => rand).take(1).result.headOption)
-
-  private def findUnseenQuery(accountId: Long) = for {
-    accountAd <- accountAds if accountAd.accountId =!= accountId
-    ad <- ads if ad.id === accountAd.adId
-  } yield ad
-
+  def findRandomForUser(accountId: Long): Future[Option[Ad]] = {
+    val tmp = accountAds.filter(_.accountId === accountId).map(_.adId)
+    db.run(ads.filterNot(ad => ad.id in tmp).sortBy(x => rand).result.headOption)
+  }
 
 }
