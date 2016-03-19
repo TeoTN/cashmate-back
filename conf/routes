@@ -18,6 +18,7 @@ POST        /ad/:adId/answer                          controllers.AdController.a
 # Coupon
 GET         /coupons                                  controllers.CouponController.all
 GET         /coupons/:pattern                         controllers.CouponController.pattern(pattern: String)
+GET         /coupon/:id                               controllers.CouponController.single(id: Long)
 
 # Transaction
 POST        /transaction/coupon/:couponId             controllers.TransactionController.createTransaction(couponId: Long, token: String ?= "")

@@ -24,4 +24,11 @@ class CouponController @Inject()(couponDAO: CouponDAO) extends Controller {
     }
   }
 
+  def single(id: Long) = Action.async {
+    couponDAO.findById(id) map {
+      case None => BadRequest("No such coupon")
+      case Some(coupon) => Ok(Json.toJson(coupon))
+    }
+  }
+
 }
