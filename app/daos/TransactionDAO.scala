@@ -14,7 +14,7 @@ trait TransactionComponent {
 
   import driver.api._
 
-  class Transactions(tag: Tag) extends Table[Transaction](tag, "coupon") {
+  class Transactions(tag: Tag) extends Table[Transaction](tag, "transaction") {
 
     def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
 

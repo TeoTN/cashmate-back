@@ -20,7 +20,7 @@ class TransactionController @Inject()(accountDAO: AccountDAO)(transactionDAO: Tr
         case None => Future.successful(BadRequest(Json.toJson(errorJson("User does not exist"))))
         case Some(account) => couponDAO.findById(couponId) flatMap {
           case None =>
-            Future.successful(BadRequest(Json.toJson(errorJson("User does not exist"))))
+            Future.successful(BadRequest(Json.toJson(errorJson("Coupon does not exist"))))
           case Some(coupon) =>
             if (account.points > coupon.points) {
               transactionDAO.insert(new Transaction(couponId, accountId)) map {
