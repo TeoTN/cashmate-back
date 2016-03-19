@@ -7,6 +7,7 @@ import models.Account
 import org.mindrot.jbcrypt.BCrypt
 import play.api.mvc._
 import play.api.libs.json._
+import play.Logger
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -21,12 +22,14 @@ class AccountController @Inject()(accountDAO: AccountDAO) extends Controller {
       authenticationRequest =>
         accountDAO.findByLogin(authenticationRequest.login) map {
           case None => BadRequest(Json.toJson(errorJson))
-          case Some(account) =>
+          case Some(account) => {
+            Logger.info(s"${account.login}")
             if (BCrypt.checkpw(authenticationRequest.password, account.passwordHash)) {
               Ok(Json.toJson(okJson(account))).withSession(request.session + ("id" -> account.id.get.toString))
             } else {
               Unauthorized(Json.toJson(errorJson))
             }
+          }
         }
     )
   }
