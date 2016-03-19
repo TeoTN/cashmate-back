@@ -40,6 +40,9 @@ class CouponDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider
 
   private val coupons = TableQuery[Coupons]
 
+  def findAll(): Future[Seq[Coupon]] =
+    db.run(coupons.result)
+
 
 
 }
