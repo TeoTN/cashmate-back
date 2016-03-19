@@ -14,9 +14,22 @@ class TransactionController @Inject()(accountDAO: AccountDAO)(transactionDAO: Tr
 
   def createTransaction(couponId: Long, token: String) = Action.async { implicit request =>
     forAuthorizedUser(token, (accountId) => {
-      transactionDAO.insert(new Transaction(couponId, accountId)) map {
-        transaction => Ok(Json.toJson(transaction))
+      accountDAO.findById(accountId) flatMap {
+        case None => Future.successful(BadRequest(Json.toJson(errorJson("User does not exist"))))
+        case Some(account) => couponDAO.findById(couponId) flatMap {
+          case None =>
+            Future.successful(BadRequest(Json.toJson(errorJson("User does not exist"))))
+          case Some(coupon) =>
+            if (account.points > coupon.points) {
+              transactionDAO.insert(new Transaction(couponId, accountId)) map {
+                transaction => Ok(Json.toJson(transaction))
+              }
+            } else {
+              Future.successful(BadRequest(Json.toJson(errorJson("Insufficient points"))))
+            }
+        }
       }
+
     })
   }
 
