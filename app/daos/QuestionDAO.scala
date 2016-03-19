@@ -41,6 +41,6 @@ class QuestionDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
     db.run(questions.filter(_.id === id).result.headOption)
 
   def findRandomQuestionForAd(adId: Long): Future[Question] =
-    db.run(questions.filter(_.adId === adId).sortBy(x => rand).take(1).result.head)
+    db.run(questions.filter(_.adId === adId).sortBy(_ => rand).take(1).result.head)
 
 }

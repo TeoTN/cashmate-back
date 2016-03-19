@@ -31,19 +31,19 @@ class AdController @Inject()
   def answer(adId: Long) = Action.async(BodyParsers.parse.json) { implicit request =>
     implicit val answerRequestFormat = Json.format[AnswerRequest]
     request.body.validate[AnswerRequest].fold(
-      error => Future.successful(BadRequest("K1")),
+      error => Future.successful(BadRequest(Json.toJson(errorJson))),
       answerRequest => forAuthorizedUser(request, (accountId) => {
         questionDAO.findById(answerRequest.questionId) flatMap {
-          case None => Future.successful(BadRequest("K2"))
+          case None => Future.successful(BadRequest(Json.toJson(errorJson)))
           case Some(question) => answerDAO.findAnswersForQuestion(question.id.get) flatMap {
             answers => if (checkAnswers(answers, answerRequest.answerIds)) {
               adDAO.findById(adId) map {
-                case None => BadRequest("K3")
-                case Some(ad) => {
+                case None =>
+                  BadRequest(Json.toJson(errorJson))
+                case Some(ad) =>
                   accountDAO.addPoints(accountId, ad.points)
                   accountAdDAO.insert(AccountAd(accountId, ad.id.get))
                   Ok(Json.toJson(okJsonAnswer(ad)))
-                }
               }
             } else {
               Future.successful(Ok(Json.toJson(errorJson)))
