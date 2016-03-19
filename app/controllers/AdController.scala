@@ -73,6 +73,8 @@ class AdController @Inject()
     "id" -> ad.id.get,
     "title" -> ad.title,
     "videoUrl" -> ad.videoUrl,
+    "points" -> ad.points,
+    "vendor" -> ad.vendor,
     "question" -> Json.obj(
       "id" -> question.id.get,
       "content" -> question.content,
