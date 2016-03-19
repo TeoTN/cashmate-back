@@ -3,4 +3,4 @@
 curl --include \
   --request GET \
   -b cookies.txt -c cookies.txt \
-  http://localhost:9000/ad?token=123123124
+  http://jupblb.eu:9000/ad?token=123123124

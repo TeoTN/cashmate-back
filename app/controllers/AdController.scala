@@ -80,12 +80,12 @@ class AdController @Inject()
     "question" -> Json.obj(
       "id" -> question.id.get,
       "content" -> question.content,
-      "answers" -> Json.arr(
+      "answers" -> {
         answers map (answer => Json.obj(
           "id" -> answer.id.get,
           "content" -> answer.content
         ))
-      )
+      }
     )
   )
 
