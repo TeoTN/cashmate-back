@@ -31,7 +31,7 @@ class AdController @Inject()
   }
 
   def answer(adId: Long, token: String) = Action.async(BodyParsers.parse.json) { implicit request =>
-    Logger.debug("ANSWER")
+    Logger.debug("ANSWER " + request.body.toString())
     implicit val answerRequestFormat = Json.format[AnswerRequest]
     request.body.validate[AnswerRequest].fold(
       error => Future.successful(BadRequest(Json.toJson(errorJson("Parsing error")))),
