@@ -9,6 +9,7 @@ POST        /                                         controllers.ApplicationCon
 POST        /user/login                               controllers.AccountController.login
 POST        /user/register                            controllers.AccountController.register
 GET         /user/logout                              controllers.AccountController.logout
+GET         /user/status                              controllers.AccountController.status(token: String ?= "")
 
 # Ad
 GET         /ad                                       controllers.AdController.obtain(token: String ?= "")

@@ -48,6 +48,13 @@ class AccountController @Inject()(accountDAO: AccountDAO) extends Controller {
     )
   }
 
+  def status(token: String) = Action.async { implicit request =>
+    accountDAO.findByToken(token) map {
+      case None => BadRequest(Json.toJson(errorJson("User not found")))
+      case Some(account) => Ok(Json.toJson(okJson(account)))
+    }
+  }
+
   def logout = Action {
     Logger.debug("LOGOUT")
     Ok("OK")

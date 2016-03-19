@@ -29,7 +29,6 @@ class TransactionController @Inject()(accountDAO: AccountDAO)(transactionDAO: Tr
             }
         }
       }
-
     })
   }
 
