@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 
 curl --include \
-  --request POST \
-  --header "Content-type: application/json" \
-  --data '{"login": "a", "password": "a"}' \
+  --request GET \
   -b cookies.txt -c cookies.txt \
-  http://jupblb.eu/user/login
+  -H "Origin: -" \
+  http://jupblb.eu/
