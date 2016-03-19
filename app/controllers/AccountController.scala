@@ -19,16 +19,16 @@ class AccountController @Inject()(accountDAO: AccountDAO) extends Controller {
     implicit val authenticationRequestFormat = Json.format[AuthenticationRequest]
     Logger.debug(request.body.toString())
     request.body.validate[AuthenticationRequest].fold(
-      error => Future.successful(BadRequest(Json.toJson(errorJson))),
+      error => Future.successful(BadRequest(Json.toJson(errorJson("Parsing error")))),
       authenticationRequest =>
         accountDAO.findByLogin(authenticationRequest.login) map {
           case None =>
-            BadRequest(Json.toJson(errorJson))
+            BadRequest(Json.toJson(errorJson("User not found")))
           case Some(account) =>
             if (BCrypt.checkpw(authenticationRequest.password, account.passwordHash)) {
               Ok(Json.toJson(okJson(account)))
             } else {
-              Unauthorized(Json.toJson(errorJson))
+              Unauthorized(Json.toJson("Invalid password"))
             }
         }
     )
@@ -37,7 +37,7 @@ class AccountController @Inject()(accountDAO: AccountDAO) extends Controller {
   def register = Action.async(BodyParsers.parse.json) { implicit request =>
     implicit val registrationRequestFormat = Json.format[RegistrationRequest]
     request.body.validate[RegistrationRequest].fold(
-      error => Future.successful(BadRequest(Json.toJson(errorJson))),
+      error => Future.successful(BadRequest(Json.toJson(errorJson("Parsing error")))),
       registrationRequest =>
         accountDAO.insert(new Account(
           registrationRequest.login, BCrypt.hashpw(registrationRequest.password, salt), registrationRequest.email
@@ -53,8 +53,8 @@ class AccountController @Inject()(accountDAO: AccountDAO) extends Controller {
 
   private val salt = BCrypt.gensalt()
 
-  private def errorJson = Json.obj(
-    "answer" -> "ERR"
+  private def errorJson(err: String = "ERR") = Json.obj(
+    "answer" -> err
   )
 
   private def okJson(account: Account) = Json.obj(
