@@ -3,6 +3,7 @@ package controllers
 import com.google.inject._
 import daos.{AccountDAO, CouponDAO, TransactionDAO}
 import models.Transaction
+import play.Logger
 import play.api.mvc._
 import play.api.libs.json._
 
@@ -13,6 +14,7 @@ class TransactionController @Inject()(accountDAO: AccountDAO)(transactionDAO: Tr
   extends Controller {
 
   def createTransaction(couponId: Long, token: String) = Action.async { implicit request =>
+    Logger.debug("CREATE " + request.body.toString)
     forAuthorizedUser(token, (accountId) => {
       accountDAO.findById(accountId) flatMap {
         case None => Future.successful(BadRequest(Json.toJson(errorJson("User does not exist"))))
@@ -33,6 +35,7 @@ class TransactionController @Inject()(accountDAO: AccountDAO)(transactionDAO: Tr
   }
 
   def checkTransaction(transactionId: Long, token: String) = Action.async { implicit request =>
+    Logger.debug("CHECK " + request.body.toString)
     forAuthorizedUser(token, (accountId) => {
       transactionDAO.findById(transactionId) map {
         case None =>
@@ -48,6 +51,7 @@ class TransactionController @Inject()(accountDAO: AccountDAO)(transactionDAO: Tr
   }
 
   def acceptTransactionByClient(transactionId: Long, token: String) = Action.async { implicit request =>
+    Logger.debug("CLIENT CONFIRM " + request.body.toString)
     forAuthorizedUser(token, (accountId) => {
       transactionDAO.findById(transactionId) flatMap {
         case None =>
@@ -70,6 +74,7 @@ class TransactionController @Inject()(accountDAO: AccountDAO)(transactionDAO: Tr
   }
 
   def acceptTransactionByVendor(code: Int) = Action.async { implicit request =>
+    Logger.debug("VENDOR CONFIRM " + request.body.toString)
     transactionDAO.findByCode(code) flatMap {
       case None => Future.successful(BadRequest(Json.toJson(errorJson("No such transaction"))))
       case Some(transaction) => transactionDAO.acceptTransaction(transaction.id.get) map {
